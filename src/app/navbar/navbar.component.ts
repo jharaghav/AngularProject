@@ -1,5 +1,10 @@
-import {Component, OnInit} from '@angular/core';
-import {FetchmoviesService} from '../fetchmovies.service';
+import { Component, OnInit } from '@angular/core';
+import { FetchmoviesService } from '../fetchmovies.service';
+import { CommunicatorService } from '../communicator.service';
+import { LoginService } from '../login.service';
+import { AuthService } from '../auth.service';
+import { of } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-navbar',
@@ -8,12 +13,18 @@ import {FetchmoviesService} from '../fetchmovies.service';
 })
 export class NavbarComponent implements OnInit {
   a = 10;
-
-  constructor(public fms: FetchmoviesService) {
+  loggedin;
+  name = of([1, 2, 3, 4, 5, 6, 10, 20, 30, 40]);
+  constructor(public loginService: LoginService, public auth: AuthService) {
   }
-
   ngOnInit() {
-    console.log(this.fms.getMovies(), " From Navigator");
+    this.loggedin = sessionStorage.getItem('loginUser');
+    // i want to listen on the events call  loginService --Subscriber events ---->
+    this.loginService.getSubscriber().subscribe((data) => {
+      this.loggedin = data;
+    });
+    this.name.pipe(map(name => name.map(each => each > 10))).subscribe((result) => {
+      console.log(result);
+    });
   }
-
 }
